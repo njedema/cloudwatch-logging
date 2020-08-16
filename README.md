@@ -1,5 +1,4 @@
-class JSONFilter(object):
-    pass# Overview
+# Overview
 
 This package provides structured JSON logging faculties designed to seamlessly interoperate with log aggregators like 
 AWS Cloudwatch, ELK, and others. These faculties are provided via extension of the python's existing logging library 
@@ -12,9 +11,9 @@ application logs to those emitted by the Lambda runtime. See usage examples belo
 
 ## Usage:
 If you want to generate simple structured logs, use this package just like the Python logging library. If you intend to
-run your application in a specific runtime, take advantage of option to use a predefined runtime. Runtimes add useful 
-context specific information to all subsequent log lines without having to specify it in "extra" explicitly. If you 
-want to customize your logging even further, you can update the filter used by the logger's Formatter to strip specific keys 
+run your application in a specific runtime (e.g. AWS Lambda), take advantage of option to use a predefined runtime. 
+Runtimes add useful context specific information to all subsequent log lines without having to specify it in "extra" explicitly. 
+If you want to customize your logging even further, you can update the filter used by the logger's Formatter to strip specific keys 
 from the emitted JSON. This is a great way to save money on log storage costs. This feature can also be useful in specific log 
 stacks - namely the ELK stack - that need to inject specific keys like the `type` key to index logs correctly.     
 
