@@ -7,7 +7,7 @@ from aws_lambda_context import LambdaContext
 
 
 class JSONFilter(object):
-    SANE_DEFAULT = {"name", "args", "filename", "module", "thread", "threadName", "processName", "process"}
+    LOW_COST = {"name", "args", "filename", "module", "thread", "threadName", "processName", "process"}
     NONE = set()
 
     @classmethod

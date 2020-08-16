@@ -14,7 +14,7 @@ class TestCloudwatchLogger(unittest.TestCase):
         lambda_logger.warning("Structured logging with Lambda context object and custom fields", extra={"field": "value"})
 
         # enable filtering on the Lambda logger and save some money on CW storage costs
-        CloudwatchLogging.update_filter(lambda_logger, filter=JSONFilter.SANE_DEFAULT)
+        CloudwatchLogging.update_filter(lambda_logger, filter=JSONFilter.LOW_COST)
         lambda_logger.warning("Structured logging with useful attributes only", extra={"field": "value"})
 
         # define custom filtering to ensure logstash "type" key is filtered out.

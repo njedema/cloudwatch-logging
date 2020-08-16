@@ -1,4 +1,5 @@
-# Overview
+class JSONFilter(object):
+    pass# Overview
 
 This package provides structured JSON logging faculties designed to seamlessly interoperate with log aggregators like 
 AWS Cloudwatch, ELK, and others. These faculties are provided via extension of the python's existing logging library 
@@ -29,8 +30,15 @@ logger.setLevel(logging.INFO)
 # Log some stuff
 logger.info("msg", extra={"custom field": "custom value"})
 
-# Update JSON filter (Optional) 
+# Create and use a custom JSON filter (Optional). Note, make sure your app doesn't try to log any fields with this key 
+# or they will fail to appear. 
+CloudwatchLogging.JSONFilter.register_filter(name="ELK", values={"type"})
+CloudwatchLogging.update_filter(logger, filter=CloudwatchLogging.JSONFilter.ELK)
+logger.info("Sorry to hear you haven't migrated to Cloudwatch yet", extra={"type": "will be omitted"})
 
+# Use author recommended JSON filter; save $$$ on log storage costs, spend more on GPUs
+CloudwatchLogging.update_filter(logger, filter=CloudwatchLogging.JSONFilter.LOW_COST)
+logger.info("This line costs less", extra={"custom_field": "custom_value"})
 ```
 
 #### Lambda 
@@ -58,7 +66,6 @@ Run python3 test_cloudwatch_logging.py. Inspect the output to see what is logged
 but I wrote this on vacation and couldn't be bothered. 
 
 ## To-Do
-- Add advanced examples to readMe for filtering and customization
 - Ensure getLogger works with existing loggers/adapters -> maybe use Adapter for everything to standardize
 - Check error and exception trace handling - how can we make these better? 
 - Add support for other AWS runtimes (Fargate?)
