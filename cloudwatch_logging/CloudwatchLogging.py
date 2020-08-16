@@ -49,17 +49,8 @@ class LambdaAdapter(logging.LoggerAdapter):
         self._context = context
 
 
-class DockerAdapter(logging.LoggerAdapter):
-    """
-
-    """
-    def process(self, msg, kwargs):
-        raise NotImplementedError
-
-
 class RuntimeEnvs(Enum):
     LAMBDA = "lambda"
-    DOCKER = "docker"
     NONE = None
 
 
