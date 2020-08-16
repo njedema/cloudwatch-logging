@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cloudwatch-logging", # Replace with your own username
-    version="1.0.0.dev1",
+    version="0.0.2",
     author="Nicolaas Jedema",
     author_email="nj2681@gmail.com",
     url="https://github.com/njedema/cloudwatch-logging/",
