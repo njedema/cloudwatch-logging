@@ -1,4 +1,4 @@
-#Overview
+# Overview
 
 This package provides structured logging faculties designed to facilitate easy log querying in CloudWatch. These faculties 
 are provided via extension of the native python logging libary. In addition to provided access to JSON formatted logging 
@@ -7,13 +7,12 @@ for the easy addition of runtime specific metadata (e.g. Lambda requestId, ECS t
 can be easily used with: `logger.info("msg", extra={"field_name": "field_value"})` 
 
 ## Example
-Use like:
+Use like this:
 ```python
-import os
-import src.cloudwatch_logging as cloudwatch_logging 
+from cloudwatch_logging import CloudwatchLogging
 
 # Setup logging
-LOGGER, ADAPTER = cloudwatch_logging.create_logger("your_logger_name")
+LOGGER = CloudwatchLogging.getLogger("your_logger_name")
 ```
 
 # Development

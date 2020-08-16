@@ -48,6 +48,7 @@ class LambdaAdapter(logging.LoggerAdapter):
     def update_context(self, context: LambdaContext):
         self._context = context
 
+
 class DockerAdapter(logging.LoggerAdapter):
     """
 
@@ -62,19 +63,17 @@ class RuntimeEnvs(Enum):
     NONE = None
 
 
-class CloudwatchLogging(logging.Logger):
-    @staticmethod
-    def getLogger(name, runtime: RuntimeEnvs = RuntimeEnvs.NONE, context = None):
-        logger = logging.getLogger(name)
-        formatter = CloudwatchFormatter(CloudwatchFormatter.DEFAULT_FILTER)
-        handler = logging.StreamHandler()
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+def getLogger(name, runtime: RuntimeEnvs = RuntimeEnvs.NONE, context = None):
+    logger = logging.getLogger(name)
+    formatter = CloudwatchFormatter(CloudwatchFormatter.DEFAULT_FILTER)
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
-        if runtime is RuntimeEnvs.LAMBDA:
-            adapter = LambdaAdapter(logger, context)
-            adapter.propagate = False  # ensure we don't double log messages from lambda builtin logger
-            return adapter
+    if runtime is RuntimeEnvs.LAMBDA:
+        adapter = LambdaAdapter(logger, context)
+        adapter.propagate = False  # ensure we don't double log messages from lambda builtin logger
+        return adapter
 
-        else:
-            return logger
+    else:
+        return logger
