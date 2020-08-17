@@ -3,9 +3,11 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+version = "0.0.3"
+
 setuptools.setup(
     name="cloudwatch-logging", # Replace with your own username
-    version="0.0.2",
+    version=version,
     author="Nicolaas Jedema",
     author_email="nj2681@gmail.com",
     url="https://github.com/njedema/cloudwatch-logging/",
