@@ -1,26 +1,29 @@
 import unittest
 import logging
-from cloudwatch_logging import CloudwatchLogging
-from cloudwatch_logging.CloudwatchLogging import JSONFilter
+from cloudwatch_logging import CloudwatchLogging, Filters
 
 
 class TestCloudwatchLogger(unittest.TestCase):
     def test_logger(self):
-        context = CloudwatchLogging.LambdaContext()
-        context.function_name = "TestLambdaFunction"
-        context.aws_request_id = "123a1a12-1234-1234-1234-123456789012"
-        lambda_logger = CloudwatchLogging.getLogger(__name__, runtime=CloudwatchLogging.AWSRuntime.LAMBDA, context=context)
-        lambda_logger.setLevel(logging.INFO)
-        lambda_logger.warning("Structured logging with Lambda context object and custom fields", extra={"field": "value"})
+        context = {"function_name": "TestLambdaFunction", "aws_request_id": "123a1a12-1234-1234-1234-123456789012"}
 
-        # enable filtering on the Lambda logger and save some money on CW storage costs
-        CloudwatchLogging.update_filter(lambda_logger, filter=JSONFilter.LOW_COST)
-        lambda_logger.warning("Structured logging with useful attributes only", extra={"field": "value"})
+        # create configured logger, optionally with runtime specific appenders and filters to remove unwanted fields
+        logger = CloudwatchLogging.create_logger(__name__, appender=None, filter=None)
+        logger.setLevel(logging.INFO)
+        logger.warning("Structured logging with custom fields", extra={"custom_field": "custom_value"})
 
-        # define custom filtering to ensure logstash "type" key is filtered out.
-        JSONFilter.register_filter(name="ELK_DEFAULT", values={"type"})
-        CloudwatchLogging.update_filter(lambda_logger, filter=JSONFilter.ELK_DEFAULT)
-        lambda_logger.warning("Structured logging that's compatible with the ELK stack")
+        # create an appender that adds a configurable dict of key/values to our structured log lines
+        logger.addFilter(CloudwatchLogging.LogAppender(context))
+        logger.warning("Structured logging with added context from a Lambda function", extra={"field": "value"})
+
+        # update the context used by the LogAppender
+        context = {"function_name": "ProdLambdaFunction", "aws_request_id": "123a1a12-1234-1234-1234-123456789012"}
+        logger.update_appender(context)
+        logger.warning("Structured logging with added context from a second invoke", extra={"field": "value"})
+
+        # enable filtering on the logger and save some money on CW storage costs
+        logger.addFilter(CloudwatchLogging.LogFilter(Filters.COST_EFFECTIVE))
+        logger.warning("Structured logging with Lambda context on the cheap!", extra={"field": "value"})
 
 if __name__ == '__main__':
     unittest.main()

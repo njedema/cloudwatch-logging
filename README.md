@@ -20,24 +20,16 @@ stacks - namely the ELK stack - that need to inject specific keys like the `type
 #### Basic usage
 ```python
 import logging
-from cloudwatch_logging import CloudwatchLogging
+from cloudwatch_logging import CloudwatchLogging, Filters
 
-# Setup logging
-logger = CloudwatchLogging.getLogger("your_logger_name")
+# create a structured JSON logger that works well with Cloudwatch and others; optionally with runtime specific appenders and filters to remove unwanted fields
+logger = CloudwatchLogging.create_logger(__name__, appender=None, filter=None)
 logger.setLevel(logging.INFO)
+logger.warning("Structured logging with custom fields", extra={"custom_field": "custom_value"})
 
-# Log some stuff
-logger.info("msg", extra={"custom field": "custom value"})
-
-# Create and use a custom JSON filter (Optional). Note, make sure your app doesn't try to log any fields with this key 
-# or they will fail to appear. 
-CloudwatchLogging.JSONFilter.register_filter(name="ELK", values={"type"})
-CloudwatchLogging.update_filter(logger, filter=CloudwatchLogging.JSONFilter.ELK)
-logger.info("Sorry to hear you haven't migrated to Cloudwatch yet", extra={"type": "will be omitted"})
-
-# Use author recommended JSON filter; save $$$ on log storage costs, spend more on GPUs
-CloudwatchLogging.update_filter(logger, filter=CloudwatchLogging.JSONFilter.LOW_COST)
-logger.info("This line costs less", extra={"custom_field": "custom_value"})
+# add a LogTrimmer on the logger and save some money on CW storage costs
+logger.addFilter(CloudwatchLogging.LogFilter(Filters.COST_EFFECTIVE))
+logger.warning("Structured logging with Lambda context on the cheap!", extra={"field": "value"})
 ```
 
 #### Lambda 
@@ -46,13 +38,15 @@ import logging
 from cloudwatch_logging import CloudwatchLogging
 
 # Setup logging
-logger = CloudwatchLogging.getLogger("your_lambda_function", runtime=CloudwatchLogging.AWSRuntime.LAMBDA)
+logger = CloudwatchLogging.create_logger("your_lambda_function")
 logger.setLevel(logging.INFO)
 
 def your_lambda_handler(event, context):
-    # Lambda context changes with each invocation. Use update_context so that you can reuse your logger across invokes!   
-    logger.update_context(context=context)
+    # Lambda context changes with each invocation. Use update_context so that you can reuse your logger across invokes!
+    lamdbda_appender = CloudwatchLogging.LogAppender(context)
+    logger.addFilter(lamdbda_appender)
     logger.info("This line will be logged with info from the Lambda context object!", extra={"tapped_in": True})
+    logger.removeFilter(lamdbda_appender)  # ensure you do this so you don't add duplicate appenders on the same logger
 ```
 
 # Development
@@ -65,6 +59,5 @@ Run python3 test_cloudwatch_logging.py. Inspect the output to see what is logged
 but I wrote this on vacation and couldn't be bothered. 
 
 ## To-Do
-- Ensure getLogger works with existing loggers/adapters -> maybe use Adapter for everything to standardize
 - Check error and exception trace handling - how can we make these better? 
-- Add support for other AWS runtimes (Fargate?)
+- Add examples for other AWS runtimes (Fargate?)
