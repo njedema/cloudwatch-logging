@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = "0.0.3"
+version = "1.0.0"
 
 setuptools.setup(
     name="cloudwatch-logging", # Replace with your own username
@@ -17,11 +17,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent"
     ],
-    python_requires='>=3.4',
+    python_requires='>=3.6',
 )

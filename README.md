@@ -36,11 +36,10 @@ from cloudwatch_logging import CloudwatchLogging
 
 # Setup logging
 logger = CloudwatchLogging.create_logger("your_lambda_function")
-logger.propagate = False  # disable Lambda runtime default logger from logging these
+logger.propagate = False  # disable Lambda runtime default logger from double logging lines sent to this logger
 logger.setLevel(logging.INFO)
 
 def your_lambda_handler(event, context):
-    # Lambda context changes with each invocation. Use update_context so that you can reuse your logger across invokes!
     lamdbda_appender = CloudwatchLogging.LogAppender(context)
     logger.addFilter(lamdbda_appender)
     logger.info("This line will be logged with info from the Lambda context object!", extra={"tapped_in": True})

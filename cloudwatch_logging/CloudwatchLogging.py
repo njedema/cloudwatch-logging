@@ -2,7 +2,6 @@ import json
 import time
 import logging
 from typing import Union, AnyStr, Set, Dict
-
 from cloudwatch_logging.ContextLogger import ContextLogger
 
 
